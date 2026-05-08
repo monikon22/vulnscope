@@ -1,0 +1,20 @@
+id: PATH_TRAVERSAL_001
+title: Path Traversal Disclosure
+description: Detects operating-system file markers after safe path traversal probes.
+category: path_traversal
+severity: high
+confidence_base: 70
+cwe: CWE-22
+tags: [owasp-top-10]
+payloads:
+  - "../etc/passwd"
+  - "..\\windows\\win.ini"
+match:
+  type: regex
+  values:
+    - "(root:x:0:0|\\[fonts\\]|\\[extensions\\])"
+recommendation: Normalize paths, reject traversal sequences, and serve files only from an allowlisted directory.
+references:
+  - https://owasp.org/www-community/attacks/Path_Traversal
+safe: true
+

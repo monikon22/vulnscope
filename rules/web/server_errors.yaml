@@ -1,0 +1,16 @@
+id: SERVER_ERROR_001
+title: Server Error During Safe Probe
+description: Detects HTTP 5xx responses that may indicate unhandled input or fragile server behavior.
+category: stability
+severity: low
+confidence_base: 60
+cwe: CWE-755
+tags: [reliability, misconfiguration]
+payloads: []
+match:
+  type: server_error
+recommendation: Investigate server-side exceptions and return controlled error responses.
+references:
+  - https://owasp.org/www-community/Improper_Error_Handling
+safe: true
+

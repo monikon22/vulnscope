@@ -1,0 +1,19 @@
+id: SSRF_INDICATOR_001
+title: Server-Side Request Forgery Indicator
+description: Detects SSRF-like error messages without attempting internal network access.
+category: ssrf
+severity: medium
+confidence_base: 55
+cwe: CWE-918
+tags: [owasp-top-10]
+payloads:
+  - "https://example.invalid/"
+match:
+  type: regex
+  values:
+    - "(connection refused|could not resolve host|ECONNREFUSED|No route to host)"
+recommendation: Restrict server-side URL fetchers with allowlists and block private network ranges.
+references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/
+safe: true
+

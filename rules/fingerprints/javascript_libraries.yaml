@@ -1,0 +1,5 @@
+- name: jquery
+  pattern: "jquery[-.]([0-9.]+)"
+- name: bootstrap
+  pattern: "bootstrap[-.]([0-9.]+)"
+

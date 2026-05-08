@@ -1,0 +1,7 @@
+- name: Django
+  header: X-Frame-Options
+  pattern: "DENY"
+- name: Express
+  header: X-Powered-By
+  pattern: "Express"
+

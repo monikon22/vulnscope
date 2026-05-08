@@ -1,0 +1,18 @@
+id: XSS_REFLECTED_001
+title: Reflected Cross-Site Scripting
+description: Detects unescaped reflection of a safe HTML/JavaScript marker payload.
+category: xss
+severity: high
+confidence_base: 80
+cwe: CWE-79
+tags: [owasp-top-10, injection]
+payloads:
+  - "<script>alert(1)</script>"
+  - "\"><img src=x onerror=alert(1)>"
+match:
+  type: reflected_without_encoding
+recommendation: Apply contextual output encoding, validate input, and configure a strict Content-Security-Policy.
+references:
+  - https://owasp.org/www-community/attacks/xss/
+safe: true
+

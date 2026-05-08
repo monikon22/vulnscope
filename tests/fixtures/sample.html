@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="generator" content="TestCMS 1.2.3">
+    <script src="/static/jquery-3.4.1.min.js"></script>
+    <script>fetch("/api/items?limit=10")</script>
+  </head>
+  <body>
+    <a href="/login?next=/admin">Login</a>
+    <iframe src="/embedded/status"></iframe>
+    <form action="/search" method="get">
+      <input name="q">
+      <input name="page" value="1">
+    </form>
+  </body>
+</html>

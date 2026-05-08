@@ -1,0 +1,49 @@
+- id: HEADER_CSP_001
+  title: Missing Content-Security-Policy
+  description: Content-Security-Policy reduces XSS impact and unsafe content loading.
+  category: headers
+  severity: medium
+  confidence_base: 90
+  cwe: CWE-693
+  tags: [headers, owasp-top-10]
+  payloads: []
+  match:
+    type: missing_header
+    header: Content-Security-Policy
+  recommendation: Add a restrictive Content-Security-Policy appropriate for the application.
+  references:
+    - https://developer.mozilla.org/docs/Web/HTTP/CSP
+  safe: true
+- id: HEADER_XFO_001
+  title: Missing X-Frame-Options
+  description: X-Frame-Options or CSP frame-ancestors helps prevent clickjacking.
+  category: headers
+  severity: low
+  confidence_base: 90
+  cwe: CWE-1021
+  tags: [headers]
+  payloads: []
+  match:
+    type: missing_header
+    header: X-Frame-Options
+  recommendation: Set X-Frame-Options DENY/SAMEORIGIN or CSP frame-ancestors.
+  references:
+    - https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Frame-Options
+  safe: true
+- id: HEADER_HSTS_001
+  title: Missing Strict-Transport-Security
+  description: HSTS tells browsers to use HTTPS for future requests.
+  category: headers
+  severity: medium
+  confidence_base: 80
+  cwe: CWE-319
+  tags: [headers]
+  payloads: []
+  match:
+    type: missing_header
+    header: Strict-Transport-Security
+  recommendation: Enable HSTS after confirming HTTPS works for all subdomains.
+  references:
+    - https://developer.mozilla.org/docs/Web/HTTP/Headers/Strict-Transport-Security
+  safe: true
+

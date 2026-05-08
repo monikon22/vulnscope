@@ -1,0 +1,18 @@
+id: INFO_DISCLOSURE_001
+title: Information Disclosure
+description: Detects verbose errors, stack traces, and debug markers in responses.
+category: information_disclosure
+severity: medium
+confidence_base: 70
+cwe: CWE-209
+tags: [misconfiguration]
+payloads: []
+match:
+  type: regex
+  values:
+    - "(Traceback \\(most recent call last\\)|Stack trace|DEBUG=True|phpinfo\\(\\)|Exception in thread)"
+recommendation: Disable debug output in production and return generic error messages.
+references:
+  - https://owasp.org/www-community/Improper_Error_Handling
+safe: true
+

@@ -1,0 +1,19 @@
+id: OPEN_REDIRECT_INDICATOR_001
+title: Open Redirect Indicator
+description: Detects reflected redirect destinations in responses after safe URL parameter probes.
+category: access_control
+severity: medium
+confidence_base: 55
+cwe: CWE-601
+tags: [owasp-top-10, redirects]
+payloads:
+  - "https://example.invalid/"
+match:
+  type: contains_any
+  values:
+    - "https://example.invalid/"
+recommendation: Validate redirect destinations against an allowlist of local paths or trusted hosts.
+references:
+  - https://owasp.org/www-community/attacks/Unvalidated_Redirects_and_Forwards_Cheat_Sheet
+safe: true
+

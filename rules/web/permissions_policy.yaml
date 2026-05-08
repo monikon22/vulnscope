@@ -1,0 +1,17 @@
+id: HEADER_PERMISSIONS_POLICY_001
+title: Missing Permissions-Policy
+description: Permissions-Policy restricts access to powerful browser APIs.
+category: headers
+severity: low
+confidence_base: 80
+cwe: CWE-693
+tags: [headers]
+payloads: []
+match:
+  type: missing_header
+  header: Permissions-Policy
+recommendation: Configure Permissions-Policy to disable unused browser features.
+references:
+  - https://developer.mozilla.org/docs/Web/HTTP/Headers/Permissions-Policy
+safe: true
+

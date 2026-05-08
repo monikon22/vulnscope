@@ -1,0 +1,16 @@
+id: COOKIE_SECURITY_001
+title: Insecure Cookie Attributes
+description: Detects cookies missing Secure, HttpOnly, or SameSite attributes.
+category: headers
+severity: medium
+confidence_base: 85
+cwe: CWE-614
+tags: [headers, session]
+payloads: []
+match:
+  type: insecure_cookie
+recommendation: Set Secure, HttpOnly, and SameSite attributes on session and sensitive cookies.
+references:
+  - https://owasp.org/www-community/controls/SecureCookieAttribute
+safe: true
+

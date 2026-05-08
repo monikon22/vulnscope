@@ -1,0 +1,20 @@
+id: SQLI_ERROR_001
+title: SQL Error Disclosure
+description: Detects common database error messages after safe quote-based probes.
+category: sqli
+severity: high
+confidence_base: 75
+cwe: CWE-89
+tags: [owasp-top-10, injection]
+payloads:
+  - "'"
+  - "\""
+match:
+  type: regex
+  values:
+    - "(SQL syntax|mysql_fetch|ORA-[0-9]{5}|PostgreSQL.*ERROR|SQLite/JDBCDriver|Unclosed quotation mark)"
+recommendation: Use parameterized queries and avoid returning database errors to users.
+references:
+  - https://owasp.org/www-community/attacks/SQL_Injection
+safe: true
+

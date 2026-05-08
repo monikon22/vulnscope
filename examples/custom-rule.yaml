@@ -1,0 +1,18 @@
+id: CUSTOM_DEBUG_HEADER_001
+title: Debug Header Exposed
+description: Detects a custom debug header that should not be exposed in production.
+category: misconfiguration
+severity: low
+confidence_base: 80
+cwe: CWE-200
+tags: [custom, headers]
+payloads: []
+match:
+  type: technology_detected
+  values:
+    - X-Debug
+recommendation: Remove debug headers from production responses.
+references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+safe: true
+

@@ -1,0 +1,7 @@
+- name: nginx
+  header: Server
+  pattern: "nginx/?([0-9.]+)?"
+- name: Apache
+  header: Server
+  pattern: "Apache/?([0-9.]+)?"
+

@@ -1,0 +1,17 @@
+id: HEADER_REFERRER_POLICY_001
+title: Missing Referrer-Policy
+description: Referrer-Policy limits leakage of sensitive URLs through the Referer header.
+category: headers
+severity: low
+confidence_base: 90
+cwe: CWE-200
+tags: [headers, privacy]
+payloads: []
+match:
+  type: missing_header
+  header: Referrer-Policy
+recommendation: Set Referrer-Policy to strict-origin-when-cross-origin or a stricter value.
+references:
+  - https://developer.mozilla.org/docs/Web/HTTP/Headers/Referrer-Policy
+safe: true
+

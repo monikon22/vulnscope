@@ -1,0 +1,34 @@
+app:
+  database_path: ./data/vulnscope.db
+  report_dir: ./reports
+scanner:
+  default_profile: default
+  rate_limit: 5.0
+  timeout: 10.0
+  max_depth: 2
+  max_pages: 50
+  user_agent: VulnScope/0.1
+rules:
+  paths:
+  - ./rules/web
+  enabled_categories: []
+  enabled_registries: []
+  remote_feeds:
+  - http://localhost:8080
+export:
+  default_format: html
+  report_dir: ./reports
+  include_http_evidence: true
+  include_response_bodies: false
+  json_pretty: true
+  html_theme: dark
+profiles:
+  default:
+    rate_limit: 5.0
+    max_depth: 2
+    max_pages: 50
+    enabled_registries: []
+    enabled_categories: []
+    enabled_rule_ids: []
+    enabled_rule_refs: []
+    remote_feeds: []
