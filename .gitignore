@@ -5,10 +5,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
-dist/
-build/
+dist/**
+build/**
 *.egg-info/
-data/
-reports/
+data/**
+reports/**
 .env
 

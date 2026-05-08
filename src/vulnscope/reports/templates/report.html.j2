@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VulnScope Report {{ scan.target }}</title>
+  <style>
+    :root {
+      color-scheme: {{ 'light' if theme == 'light' or theme == 'academic' else 'dark' }};
+      --bg: {{ '#f8fafc' if theme == 'light' else '#ffffff' if theme == 'academic' else '#0f172a' }};
+      --panel: {{ '#ffffff' if theme in ['light', 'academic'] else '#111827' }};
+      --text: {{ '#111827' if theme in ['light', 'academic'] else '#e5e7eb' }};
+      --muted: #64748b;
+      --border: #334155;
+      --accent: #38bdf8;
+      --critical: #dc2626;
+      --high: #ea580c;
+      --medium: #d97706;
+      --low: #2563eb;
+      --info: #64748b;
+    }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px; }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; }
+    h1 { margin: 0 0 8px; font-size: 32px; }
+    h2 { margin-top: 32px; }
+    .muted { color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .number { font-size: 28px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); }
+    th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 10px; vertical-align: top; }
+    code, pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .finding-row { cursor: pointer; }
+    .finding-row:hover { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .finding-row[aria-expanded="true"] { background: color-mix(in srgb, var(--panel) 84%, var(--accent)); }
+    .finding-details { display: none; }
+    .finding-details.visible { display: table-row; }
+    .detail-cell { background: color-mix(in srgb, var(--panel) 88%, var(--accent)); }
+    .detail-grid { display: grid; grid-template-columns: minmax(180px, 240px) 1fr; gap: 8px 16px; margin-top: 12px; }
+    .detail-label { color: var(--muted); font-weight: 700; }
+    .finding-title { font-weight: 700; }
+    .critical { color: var(--critical); font-weight: 700; }
+    .high { color: var(--high); font-weight: 700; }
+    .medium { color: var(--medium); font-weight: 700; }
+    .low { color: var(--low); font-weight: 700; }
+    .info { color: var(--info); font-weight: 700; }
+  </style>
+  <script>
+    function toggleFinding(detailId, row) {
+      const detail = document.getElementById(detailId);
+      if (!detail) return;
+      const expanded = detail.classList.toggle("visible");
+      row.setAttribute("aria-expanded", expanded ? "true" : "false");
+    }
+  </script>
+</head>
+<body>
+<main>
+  <header>
+    <h1>VulnScope Security Report</h1>
+    <div class="muted">{{ scan.target }} · {{ scan.profile }} · {{ scan.status }}</div>
+  </header>
+  <section class="grid">
+    {% for key, value in summary.items() %}
+    <div class="card"><div class="muted">{{ key }}</div><div class="number">{{ value }}</div></div>
+    {% endfor %}
+  </section>
+  <h2>Findings</h2>
+  <table>
+    <thead><tr><th>Severity</th><th>Title</th><th>URL</th><th>Confidence</th><th>Risk</th></tr></thead>
+    <tbody>
+    {% for finding in findings %}
+      <tr class="finding-row" tabindex="0" aria-expanded="false" onclick="toggleFinding('finding-details-{{ finding.id }}', this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleFinding('finding-details-{{ finding.id }}', this); }">
+        <td class="{{ finding.severity.value }}">{{ finding.severity.value }}</td>
+        <td class="finding-title">{{ finding.title }}</td>
+        <td>{{ finding.url }}</td>
+        <td>{{ finding.confidence }}%</td>
+        <td>{{ finding.risk_score }}</td>
+      </tr>
+      <tr id="finding-details-{{ finding.id }}" class="finding-details">
+        <td colspan="5" class="detail-cell">
+            <div class="detail-grid">
+              <div class="detail-label">Category</div><div>{{ finding.category }}</div>
+              <div class="detail-label">Source</div><div>{{ finding.source }}</div>
+              <div class="detail-label">Rule</div><div>{{ finding.rule_id or 'n/a' }}</div>
+              <div class="detail-label">CWE</div><div>{{ finding.cwe or 'n/a' }}</div>
+              <div class="detail-label">Method</div><div>{{ finding.method }}</div>
+              <div class="detail-label">Parameter</div><div>{{ finding.parameter or 'n/a' }}</div>
+              <div class="detail-label">Payload</div><div><code>{{ finding.payload or 'n/a' }}</code></div>
+              <div class="detail-label">Description</div><div>{{ finding.description or 'n/a' }}</div>
+              <div class="detail-label">Evidence</div><div><code>{{ finding.evidence or 'n/a' }}</code></div>
+              <div class="detail-label">Recommendation</div><div>{{ finding.recommendation or 'n/a' }}</div>
+              <div class="detail-label">Risk explanation</div><div>{{ finding.risk_explanation or 'n/a' }}</div>
+              <div class="detail-label">References</div>
+              <div>
+                {% if finding.references %}
+                  <ul>{% for ref in finding.references %}<li><a href="{{ ref }}">{{ ref }}</a></li>{% endfor %}</ul>
+                {% else %}
+                  n/a
+                {% endif %}
+              </div>
+              <div class="detail-label">Request</div><div><pre>{{ finding.request or 'n/a' }}</pre></div>
+              <div class="detail-label">Response</div><div><pre>{{ finding.response or 'n/a' }}</pre></div>
+            </div>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No findings were detected.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <h2>Detected Components</h2>
+  <ul>{% for component in scan.components %}<li>{{ component.name }} {{ component.version or '' }} ({{ component.source }})</li>{% endfor %}</ul>
+  <h2>Appendix</h2>
+  <p class="muted">Generated by VulnScope. Use only against systems you own or have explicit permission to test.</p>
+</main>
+</body>
+</html>
