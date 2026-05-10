@@ -1,0 +1,18 @@
+---
+id: OWASP_A03_SQLI_001
+title: Possible SQL injection payload reflected
+description: Common SQL injection payloads detected in HTTP responses indicating potential injection vulnerability.
+category: injection
+severity: high
+confidence_base: 85
+match:
+  type: contains_any
+  values:
+    - "' OR '1'='1"
+    - '" OR "1"="1"'
+    - "UNION SELECT"
+recommendation: Use parameterized queries / prepared statements and validate input.
+references:
+  - https://owasp.org/www-community/attacks/SQL_Injection
+safe: true
+enabled: true

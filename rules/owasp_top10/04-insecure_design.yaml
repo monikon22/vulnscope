@@ -1,0 +1,18 @@
+---
+id: OWASP_A04_INSECURE_DESIGN_001
+title: Insecure design - generic insecure pattern
+description: Generic indicator of insecure design decisions (e.g., debug endpoints, detailed error info, or debug flags exposed).
+category: insecure_design
+severity: medium
+confidence_base: 50
+match:
+  type: contains_any
+  values:
+    - 'debug=true'
+    - '/__debug__'
+    - '/admin/debug'
+recommendation: Remove debug endpoints or protect them behind strong authentication and review design for threat modeling.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

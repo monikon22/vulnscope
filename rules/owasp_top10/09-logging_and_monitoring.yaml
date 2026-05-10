@@ -1,0 +1,14 @@
+---
+id: OWASP_A09_LOGGING_001
+title: Server error responses may leak sensitive information
+description: Error pages or server error responses disclose stack traces or detailed server information.
+category: logging_and_monitoring
+severity: medium
+confidence_base: 75
+match:
+  type: server_error
+recommendation: Avoid exposing stack traces; centralize logging and ensure alerting for high-severity events.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

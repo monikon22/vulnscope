@@ -1,0 +1,18 @@
+---
+id: OWASP_A08_INTEGRITY_001
+title: Potential integrity issue - update endpoints or artifacts exposed
+description: Responses reveal downloadable artifacts or update endpoints (e.g., .git, build artifacts) that could lead to integrity issues.
+category: integrity
+severity: medium
+confidence_base: 60
+match:
+  type: contains_any
+  values:
+    - '.git'
+    - 'composer.lock'
+    - 'pom.xml'
+recommendation: Restrict access to source and build artifacts; validate update channels and signatures.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

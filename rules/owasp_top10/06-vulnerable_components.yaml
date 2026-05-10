@@ -1,0 +1,15 @@
+---
+id: OWASP_A06_VULN_COMPS_001
+title: Server header exposes version information
+description: The Server header reveals product and version which can aid attackers finding vulnerable components.
+category: vulnerable_components
+severity: low
+confidence_base: 70
+match:
+  type: regex
+  pattern: "Server:\\s*.*[0-9]+\\.[0-9]+"
+recommendation: Hide or sanitize server version information and keep components up to date.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

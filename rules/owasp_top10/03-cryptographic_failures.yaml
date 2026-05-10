@@ -1,0 +1,18 @@
+---
+id: OWASP_A02_CRYPTO_001
+title: Sensitive data in responses (possible cryptographic failure)
+description: Responses contain plaintext secrets or credentials which may indicate improper encryption or storage.
+category: cryptography
+severity: high
+confidence_base: 80
+match:
+  type: contains_any
+  values:
+    - 'password '
+    - 'passwd '
+    - 'api_key'
+recommendation: Do not expose secrets; encrypt sensitive data in transit and at rest.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

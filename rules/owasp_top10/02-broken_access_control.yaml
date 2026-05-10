@@ -1,0 +1,15 @@
+---
+id: OWASP_A01_BAC_001
+title: Endpoint returns 200 instead of 401/403 (possible broken access control)
+description: An endpoint returned a success status where authentication/authorization was expected, indicating potential broken access control.
+category: broken_access_control
+severity: critical
+confidence_base: 75
+match:
+  type: status_code_changed
+  status_codes: [401, 403]
+recommendation: Enforce authorization checks server-side and validate access control policies.
+references:
+  - https://owasp.org/Top10/
+safe: true
+enabled: true

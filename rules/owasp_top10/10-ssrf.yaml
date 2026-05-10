@@ -1,0 +1,17 @@
+---
+id: OWASP_A10_SSRF_001
+title: Potential SSRF - internal metadata endpoint referenced
+description: Response contains references to known cloud metadata endpoints or internal addresses, indicating potential SSRF or sensitive outbound request behavior.
+category: ssrf
+severity: high
+confidence_base: 90
+match:
+  type: contains_any
+  values:
+    - '169.254.169.254'
+    - 'metadata.google.internal'
+recommendation: Validate and restrict URLs that the application can request; implement allow-listing and metadata protection.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

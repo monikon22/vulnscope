@@ -1,0 +1,15 @@
+---
+id: OWASP_A07_AUTHN_001
+title: Insecure authentication indicators (insecure cookie flags)
+description: Cookies lacking secure or httpOnly flags may be susceptible to theft.
+category: authentication
+severity: high
+confidence_base: 85
+match:
+  type: insecure_cookie
+  header: Set-Cookie
+recommendation: Set `Secure` and `HttpOnly` flags for session cookies and use SameSite where appropriate.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true

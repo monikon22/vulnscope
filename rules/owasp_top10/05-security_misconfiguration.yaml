@@ -1,0 +1,15 @@
+---
+id: OWASP_A05_SEC_MISCONF_001
+title: Missing common security headers
+description: Response is missing recommended security headers such as Content-Security-Policy or X-Content-Type-Options.
+category: security_misconfiguration
+severity: medium
+confidence_base: 80
+match:
+  type: missing_header
+  header: Content-Security-Policy
+recommendation: Add and configure security headers like Content-Security-Policy, X-Content-Type-Options, X-Frame-Options.
+references:
+  - https://owasp.org/www-project-top-ten/
+safe: true
+enabled: true
