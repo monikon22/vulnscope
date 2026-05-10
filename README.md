@@ -1,5 +1,7 @@
 # VulnScope
 
+English | [Українська](README_UA.md)
+
 VulnScope is a TUI-first vulnerability scanner for automated discovery of common web application vulnerabilities.
 
 ## Features
