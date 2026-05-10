@@ -82,3 +82,9 @@ Recommended integration testing practice:
 2. `vulnscope update`
 3. `pytest`
 4. Manual TUI flow: New Scan -> Live Scan -> Scan Detail -> Export
+
+## CI / CD Examples
+
+See `examples/github-actions-vulnscope.yml` for a minimal GitHub Actions example that installs the `vulnscope` CLI and runs a scan as part of CI. Use this as a starting point to integrate vulnerability checking into your project's pipeline.
+
+Examples are provided in the `examples/` directory.

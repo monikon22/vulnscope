@@ -1,0 +1,41 @@
+# Example GitHub Actions workflow showing how to run VulnScope in CI to validate a web application
+# Place this in .github/workflows/ in your own project or use it as a reference.
+
+name: VulnScope CI Example
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install VulnScope CLI
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install vulnscope
+
+      - name: Run VulnScope against deployed app
+        # Replace URL with your staging/test endpoint
+        run: |
+          vulnscope scan https://staging.example.com --output reports/vulnscope-ci-report.json
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnscope-report
+          path: reports/vulnscope-ci-report.json
+
+# Notes:
+# - You can run VulnScope against a service started inside the job (start the service before `vulnscope scan`).
+# - Use a dedicated test/staging target to avoid scanning production or unauthorized targets.
+# - Adjust options to the CLI (`--profile`, `--rules`, `--timeout`, etc.) to fit your CI requirements.
