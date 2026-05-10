@@ -57,57 +57,43 @@ sequenceDiagram
 
 ## Module Responsibilities
 
-### Entry Points
-- `src/vulnscope/cli.py`: Typer CLI (`scan`, `doctor`, `update`, `serve`, `import`, `profiles ...`).
-- `src/vulnscope/app.py`: public launcher `run_tui`.
-- `src/vulnscope/__main__.py`: package module entry point.
+### User Interfaces
+Interactive command-line interface (CLI) and a text-based user interface (TUI) provide entry points for users to start and control scans, manage profiles and settings, view live progress and interactively inspect findings. Interfaces support both interactive use and headless automation for CI pipelines.
 
-### Configuration
-- `src/vulnscope/config.py`:
-	- pydantic models `Settings`, `ScannerSettings`, `RuleSettings`, `ExportSettings`, `ScanProfileSettings`.
-	- config discovery by precedence.
-  - env overrides (`VULNSCOPE_CONFIG`, `VULNSCOPE_DATABASE_PATH`, `VULNSCOPE_REPORT_DIR`, `VULNSCOPE_RATE_LIMIT`).
-	- persistence of editable settings in YAML.
+### Configuration and Profiles
+Layered, environment-aware configuration enables persistent settings and editable scan profiles. Profiles capture scanning scope, payload sets and operational limits to ensure reproducible runs and easy profile switching.
 
-### Domain
-- `src/vulnscope/domain/models.py`: models `ScanConfig`, `Scan`, `Finding`, `RequestRecord`, `Component`, `Target`.
-- `src/vulnscope/domain/enums.py`: `Severity`, `ScopeMode`, scan profiles.
-- `src/vulnscope/domain/scoring.py`: deterministic risk-scoring $0..10$.
+### Scan Orchestration
+The scan orchestrator manages scan lifecycle events (start, per-page checks, findings, completion), supports pause/resume/stop semantics, and coordinates a breadth-first crawl with seed handling and scoped traversal rules to control discovery behavior.
 
-### Scanner
-- `src/vulnscope/scanner/engine.py`: orchestration scan lifecycle + `ScanEvent` (`started`, `page`, `check`, `completed`), pause/resume/stop.
-- `src/vulnscope/scanner/crawler.py`: BFS crawl, link/form extraction, seed endpoints.
-- `src/vulnscope/scanner/http_client.py`: safe HTTP client (`httpx`, timeout, TLS verify, secret redaction in previews).
-- `src/vulnscope/scanner/scope.py`: same-host / same-domain / custom include/exclude.
-- `src/vulnscope/scanner/payloads.py`: safe payload catalog by profile.
-- `src/vulnscope/scanner/analyzer.py`: component detection (headers/meta/assets).
-- `src/vulnscope/scanner/fingerprints.py`: loading fingerprint rules from YAML.
-- `src/vulnscope/scanner/profiles.py`: profile application and persistence helpers.
+### Safe HTTP Observation
+A resilient observation layer captures requests and responses with timeouts, TLS verification and error handling, while normalizing observations and applying secret redaction to sensitive fields before any downstream processing.
 
-### Rules
-- `src/vulnscope/rules/schema.py`: typed YAML rule schema and match types.
-- `src/vulnscope/rules/matchers.py`: runtime matching over body/headers/status/size delta.
-- `src/vulnscope/rules/engine.py`: transform match -> `Finding` + scoring.
-- `src/vulnscope/rules/loader.py`: local + remote feed loading, validation, and deduplication.
-- `src/vulnscope/rules/feed.py`: feed index build/fetch, hash-based cache.
-- `src/vulnscope/rules/server.py`: local HTTP feed server for rule development.
+### Scope and Safety Enforcement
+Configurable scope policies and operational safeguards (rate limiting, read-only defaults, safe payload catalogs) minimize risk to scanned targets. Scope enforcement ensures traversal remains within intended boundaries.
 
-### Storage
-- `src/vulnscope/storage/database.py`: SQLAlchemy schema (`scans`, `findings`, `traffic`, `components`, `settings`, `custom_rules`).
-- `src/vulnscope/storage/repositories.py`: `ScanRepository` save/list/get, secret redaction before persistence.
+### Rule Evaluation
+Declarative rule processing evaluates response bodies, headers, status codes and deltas against a ruleset. The engine supports feed ingestion, rule versioning, deduplication and deterministic matching semantics.
 
-### Reports
-- `src/vulnscope/reports/exporters.py`: facade `export_scan(fmt=html|json|markdown)`.
-- `src/vulnscope/reports/html.py`: Jinja2 exporter.
-- `src/vulnscope/reports/json.py`: structured JSON export with secret redaction.
-- `src/vulnscope/reports/markdown.py`: human-readable markdown export.
+### Component Fingerprinting
+Fingerprinting identifies libraries, frameworks and server components by analyzing headers, resource patterns and page artifacts, producing structured component observations for inventory and correlation with findings.
 
-### TUI
-- `src/vulnscope/tui/main.py`: `VulnScopeApp`, global bindings, navigation.
-- `src/vulnscope/tui/screens.py`: Dashboard, New Scan, Live Scan, Scan Detail, Settings, Help, detail modals.
-- `src/vulnscope/tui/controllers.py`: bridge between UI and services.
-- `src/vulnscope/tui/widgets.py`: reusable widgets.
-- `src/vulnscope/tui/styles.tcss`: UI theme and layout.
+### Findings and Scoring
+Rule matches are converted into findings with contextual metadata. A deterministic scoring mechanism assigns risk levels and aggregations prioritize issues for triage and reporting.
+
+### Persistence and Reproducibility
+Local persistence stores scan runs, traffic records, findings and detected components. Snapshots and audit records enable diffs, re-analysis and reproducible investigation of historical scans.
+
+### Reporting and Export
+Export capabilities produce stakeholder-ready outputs (HTML, JSON, Markdown) with secret redaction and navigable summaries. Exporters format findings, traffic overview and component inventories for consumption.
+
+### Observability and Audit Trail
+The system emits event streams and logs for the scan lifecycle and retains snapshots of requests/responses to support debugging, post-mortem analysis and compliance auditing.
+
+### Extensibility
+Extension points allow custom rules, external feeds and additional fingerprint sources to be integrated, enabling users to extend detection coverage and incorporate domain-specific knowledge.
+
+Responsibilities are organized into distinct layers—interface, scanning/observation, rule evaluation, analysis/scoring, storage and export—to preserve safety, testability and extensibility.
 
 ## Safety Boundaries
 
