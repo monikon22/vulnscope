@@ -24,7 +24,7 @@ vulnscope
 From source:
 
 ```bash
-python -m venv .venv
+py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 vulnscope
