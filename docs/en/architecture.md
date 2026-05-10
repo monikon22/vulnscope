@@ -37,6 +37,7 @@ sequenceDiagram
 	participant HTTP as SafeHttpClient
 	participant RE as RuleEngine
 	participant DB as ScanRepository
+	participant EX as ReportExporters
 
 	UI->>SE: run_events(ScanConfig)
 	SE->>UI: started
@@ -52,7 +53,7 @@ sequenceDiagram
 	end
 	SE->>UI: completed
 	UI->>DB: save(final scan)
-	UI->>N: export_scan(html/json/md)
+	UI->>EX: export_scan(html/json/md)
 ```
 
 ## Module Responsibilities

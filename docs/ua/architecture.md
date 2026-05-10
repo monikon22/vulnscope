@@ -31,28 +31,29 @@ flowchart LR
 
 ```mermaid
 sequenceDiagram
-	participant UI as TUI LiveScanScreen
-	participant SE as ScannerEngine
-	participant CR as Crawler
-	participant HTTP as SafeHttpClient
-	participant RE as RuleEngine
-	participant DB as ScanRepository
+	participant UI as TUI ЕкранЖивогоСканування
+	participant SE as РушійСканера
+	participant CR as Кроулер
+	participant HTTP as БезпечнийHttpClient
+	participant RE as РушійПравил
+	participant DB as РепозиторійСканування
+	participant EX as ЕкспортериЗвітів
 
-	UI->>SE: run_events(ScanConfig)
-	SE->>UI: started
-	loop BFS crawl
-		SE->>CR: iter_crawl(target)
-		CR->>HTTP: GET page
+	UI->>SE: запуск_подій(ScanConfig)
+	SE->>UI: запущено
+	loop BFS обхід
+		SE->>CR: ітерація_обходу(target)
+		CR->>HTTP: GET сторінка
 		HTTP-->>CR: HttpObservation
-		CR-->>SE: page observation
-		SE->>RE: analyze(observation)
-		RE-->>SE: findings
-		SE->>UI: page/check events
-		UI->>DB: save(scan snapshot)
+		CR-->>SE: спостереження_сторінки
+		SE->>RE: аналіз(observation)
+		RE-->>SE: результати
+		SE->>UI: події_сторінки/перевірки
+		UI->>DB: зберегти(знімок_сканування)
 	end
-	SE->>UI: completed
-	UI->>DB: save(final scan)
-	UI->>N: export_scan(html/json/md)
+	SE->>UI: завершено
+	UI->>DB: зберегти(фінальний_скан)
+	UI->>EX: експорт_сканування(html/json/md)
 ```
 
 ## Відповідальність модулів
