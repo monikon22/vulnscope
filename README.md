@@ -14,6 +14,19 @@ VulnScope is a TUI-first vulnerability scanner for automated discovery of common
 - HTML, JSON, and Markdown reports.
 - Component detection from headers, meta tags, and JavaScript asset patterns.
 
+## Comparison
+
+| Feature | VulnScope | Traditional DAST (e.g., ZAP, Burp) | Template-based Scanners (e.g., Nuclei) |
+| :--- | :--- | :--- | :--- |
+| **Primary Interface** | **TUI-first** (Interactive Terminal) | Heavy GUI / Web UI | CLI-only |
+| **Safety Model** | **Safe-by-Design** (GET-only, no destructive actions) | Full-spectrum (can be destructive if misconfigured) | Depends on templates (can be aggressive) |
+| **Rule Definition** | **Declarative YAML** (Registry-based) | Scripted / Manual / Plugin-based | YAML Templates |
+| **Rule Distribution** | **Remote Feeds** (Hash-based sync) | Manual updates / Plugin store | Community-driven YAML repos |
+| **Crawl Strategy** | BFS with strict scope enforcement | Complex spidering / Manual proxying | Usually target-list based (no deep crawl) |
+| **Fingerprinting** | Integrated YAML-based component detection | Heuristic / Manual | Template-based detection |
+| **CI/CD Integration** | Headless CLI $\rightarrow$ JSON/HTML/MD | API-driven / Heavy containers | Lightweight CLI $\rightarrow$ JSON/Text |
+| **State Management** | Local SQLite Repository (Reproducible) | Session-based / Project files | Usually stateless (output to file) |
+
 ## Quick Start
 
 ```bash
