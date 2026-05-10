@@ -1,0 +1,159 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version without the leading v, for example 0.1.1
+        required: true
+        type: string
+      release_notes:
+        description: Optional release notes body
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip build wheel setuptools
+          python -m pip install '.[dev]'
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Build package
+        run: python -m build
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  release:
+    name: Create GitHub Release
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare tags and commits
+        id: prepare
+        run: |
+          set -e
+          TAG=v${{ inputs.version }}
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          git fetch --tags
+          # find previous tag (exclude the target tag if it exists)
+          PREV_TAG=$(git tag --sort=-creatordate | grep -v "^$TAG$" | sed -n '1p' || true)
+          echo "PREV_TAG=${PREV_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Generate release body with commits and emojis
+        id: body
+        run: |
+          set -euo pipefail
+          TAG=${{ steps.prepare.outputs.TAG }}
+          PREV=${{ steps.prepare.outputs.PREV_TAG }}
+
+          BODY="## Release ${TAG}\n\n"
+          if [ -n "${{ inputs.release_notes }}" ]; then
+            BODY+="### Release notes\n${{ inputs.release_notes }}\n\n"
+          fi
+
+          if [ -n "$PREV" ]; then
+            RANGE="$PREV..HEAD"
+            BODY+="### Changes since ${PREV}\n"
+          else
+            RANGE="HEAD"
+            BODY+="### Changes\n"
+          fi
+
+          # collect commits
+          COMMITS=$(git log --pretty=format:"%h %s (%an)" $RANGE || true)
+
+          if [ -z "$COMMITS" ]; then
+            BODY+="- No commits found in range.\n"
+          else
+            # map commit messages to emojis and format in English
+            while IFS= read -r line; do
+              msg=$(echo "$line" | sed -E 's/^[0-9a-f]+ //')
+              short=$(echo "$line" | awk '{print $1}')
+              lc=$(echo "$msg" | awk '{print tolower($1)}' | sed -E 's/:$//')
+              emoji="🔧"
+              case "$lc" in
+                feat|feature)
+                  emoji="✨";;
+                fix|bugfix)
+                  emoji="🐛";;
+                docs)
+                  emoji="📝";;
+                chore)
+                  emoji="🧹";;
+                perf)
+                  emoji="⚡";;
+                refactor)
+                  emoji="♻️";;
+                test)
+                  emoji="✅";;
+                ci)
+                  emoji="⚙️";;
+                style)
+                  emoji="🎨";;
+                build)
+                  emoji="📦";;
+                revert)
+                  emoji="⏪";;
+              esac
+              BODY+="- ${emoji} ${msg} (${short})\n"
+            done <<< "$COMMITS"
+          fi
+
+          echo -e "$BODY" > release_body.md
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          cat release_body.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          # also expose as output
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          cat release_body.md >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create Git tag and push
+        run: |
+          TAG=${{ steps.prepare.outputs.TAG }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # create tag if it does not exist
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Create GitHub Release with formatted body
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.prepare.outputs.TAG }}
+          name: ${{ steps.prepare.outputs.TAG }}
+          body: |
+            ${{ steps.body.outputs.body || '' }}
+          files: |
+            dist/*

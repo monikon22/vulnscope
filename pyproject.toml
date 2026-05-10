@@ -1,15 +1,15 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "vulnscope"
-version = "0.1.0"
 description = "TUI-first safe vulnerability scanner for web applications."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { file = "LICENSE" }
 authors = [{ name = "VulnScope contributors" }]
+dynamic = ["version"]
 dependencies = [
   "beautifulsoup4>=4.12",
   "httpx>=0.27",
@@ -50,4 +50,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.12"
 strict = true
 ignore_missing_imports = true
+
+[tool.hatch.version]
+source = "vcs"
 
