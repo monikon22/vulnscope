@@ -620,7 +620,7 @@ class NewScanScreen(Screen[None]):
 
     @on(Select.Changed, "#profile")
     async def profile_changed(self, event: Select.Changed) -> None:
-        if event.value in {Select.BLANK, Select.NULL}:
+        if event.value in {Select.BLANK}:
             fallback = self._default_profile()
             self.query_one("#profile", Select).value = fallback
             return
@@ -805,7 +805,7 @@ class NewScanScreen(Screen[None]):
 
     def _selected_profile_name(self) -> str:
         value = self.query_one("#profile", Select).value
-        if value in {Select.BLANK, Select.NULL}:
+        if value in {Select.BLANK}:
             return self._default_profile()
         return str(value)
 
