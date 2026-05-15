@@ -48,6 +48,15 @@ def test_missing_header_rule() -> None:
     assert any(finding.rule_id == "HEADER_CSP_001" for finding in findings)
 
 
+def test_owasp_top10_injection_rule_detects_sql_errors() -> None:
+    rules = RuleLoader(["rules/owasp_top10/01-injection.yaml"]).load()
+    findings = RuleEngine(rules).analyze(
+        observation("You have an error in your SQL syntax near quote"),
+        "'",
+    )
+    assert any(finding.rule_id == "OWASP_A03_SQLI_ERROR_001" for finding in findings)
+
+
 def test_local_feed_index_contains_hashes() -> None:
     index = build_local_index(Path("rules"))
     assert isinstance(index.get("feed_hash"), str)

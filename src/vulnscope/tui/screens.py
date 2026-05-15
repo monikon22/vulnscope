@@ -453,6 +453,7 @@ class NewScanScreen(Screen[None]):
             max_pages=self.app.settings.scanner.max_pages,
             timeout=self.app.settings.scanner.timeout,
             user_agent=self.app.settings.scanner.user_agent,
+            auth_headers=dict(self.app.settings.scanner.auth_headers),
         )
 
     def _bind_node(self, path: str, label: str, node: object, *, checked: bool = True) -> None:
@@ -751,6 +752,7 @@ class NewScanScreen(Screen[None]):
             max_pages=int(self.query_one("#pages", Input).value or "50"),
             timeout=self.app.settings.scanner.timeout,
             user_agent=self.app.settings.scanner.user_agent,
+            auth_headers=dict(self.app.settings.scanner.auth_headers),
             enabled_registries=selected_registries,
             enabled_categories=selected_categories,
             enabled_rule_ids=selected_rules,
@@ -828,6 +830,8 @@ class LiveScanScreen(Screen[None]):
         self._sort_column = "risk"
         self._sort_desc = True
         self._latest_scan = None
+        self._stop_requested = False
+        self._finished = False
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -924,6 +928,11 @@ class LiveScanScreen(Screen[None]):
                     self.app.controller.save_scan(scan)
                     self.last_saved_traffic_count = len(scan.traffic)
                 if event.get("type") == "completed":
+                    if getattr(scan, "status", "") == "stopped":
+                        self._finish_stopped()
+                        self.notify("Scan stopped")
+                        return
+                    self._finished = True
                     progress.progress = 100
                     self._show_export_controls()
                     self.notify(f"Scan completed with {len(scan.findings)} findings")
@@ -932,12 +941,16 @@ class LiveScanScreen(Screen[None]):
             return
 
     def _finish_stopped(self) -> None:
+        if self._finished:
+            return
+        self._finished = True
         if self._latest_scan is not None:
             self._latest_scan.status = "stopped"
             self._latest_scan.finished_at = datetime.now(UTC)
             self.app.controller.save_scan(self._latest_scan)
+        self._update_label("#current-url", "Stopped")
         self._update_metric("#metric-status", "[dim]Status[/]\n[bold red]stopped[/]")
-        self._show_export_controls(show_exports=True)
+        self._show_export_controls(show_exports=self._latest_scan is not None)
 
     def _show_export_controls(self, *, show_exports: bool = True) -> None:
         try:
@@ -1002,25 +1015,26 @@ class LiveScanScreen(Screen[None]):
 
     @on(Button.Pressed, "#pause")
     def pause(self) -> None:
-        if self.engine:
+        if self.engine and not self._stop_requested:
             self.engine.pause()
+            self._update_label("#current-url", "Paused")
 
     @on(Button.Pressed, "#resume")
     def resume(self) -> None:
-        if self.engine:
+        if self.engine and not self._stop_requested:
             self.engine.resume()
 
     @on(Button.Pressed, "#stop")
     async def stop(self) -> None:
+        self._stop_requested = True
         if self.engine:
             self.engine.stop()
+        self._finish_stopped()
         if self._task and not self._task.done():
             self._task.cancel()
             with suppress(asyncio.CancelledError):
                 await self._task
-        else:
-            self._finish_stopped()
-        self.notify("Stopping scan...")
+        self.notify("Scan stopped")
 
     def _export_latest_scan(self, fmt: str) -> None:
         if self._latest_scan is None:

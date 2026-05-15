@@ -25,12 +25,13 @@ class ScannerSettings(BaseModel):
     max_depth: int = 2
     max_pages: int = 50
     user_agent: str = "VulnScope/0.1"
+    auth_headers: dict[str, str] = Field(default_factory=dict)
 
 
 class RuleSettings(BaseModel):
     """Rule configuration."""
 
-    paths: list[str] = Field(default_factory=lambda: ["./rules/web"])
+    paths: list[str] = Field(default_factory=lambda: ["./rules"])
     enabled_categories: list[str] = Field(default_factory=list)
     enabled_registries: list[str] = Field(default_factory=list)
     remote_feeds: list[str] = Field(default_factory=list)

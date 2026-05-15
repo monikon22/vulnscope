@@ -98,7 +98,9 @@ Responsibilities are organized into distinct layers—interface, scanning/observ
 
 ## Safety Boundaries
 
-- The scanner performs only safe GET-based checks and does not perform post-exploitation.
+- The scanner performs bounded safe probes against GET parameters and non-destructive forms,
+  including POST forms that preserve hidden/default values. It does not perform
+  post-exploitation.
 - Default scope policy limits scanning to the original host.
 - Payload checks are restricted to a small safe catalog and rate limiting.
 - Network errors are converted into observations (no hard scan crash).

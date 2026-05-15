@@ -25,9 +25,11 @@
 - `max_depth` (int, за замовчуванням `2`): глибина обходу BFS.
 - `max_pages` (int, за замовчуванням `50`): макс. кількість сторінок за сканування.
 - `user_agent` (рядок, за замовчуванням `VulnScope/0.1`): user agent, що використовується HTTP-клієнтом.
+- `auth_headers` (map[рядок,рядок], за замовчуванням `{}`): HTTP-заголовки для
+  автентифікованих сканувань, наприклад `Cookie: PHPSESSID=...; security=low`.
 
 ### `rules`
-- `paths` (список[рядок], за замовчуванням `['./rules/web']`): локальні шляхи до YAML-файлів/каталогів правил.
+- `paths` (список[рядок], за замовчуванням `['./rules']`): локальні шляхи до YAML-файлів/каталогів правил.
 - `enabled_categories` (список[рядок], за замовчуванням `[]`): фільтр категорій за замовчуванням.
 - `enabled_registries` (список[рядок], за замовчуванням `[]`): фільтр реєстрів за замовчуванням.
 - `remote_feeds` (список[рядок], за замовчуванням `[]`): список URL-адрес віддалених стрічок правил.
@@ -86,11 +88,11 @@ scanner:
 	max_depth: 2
 	max_pages: 50
 	user_agent: "VulnScope/0.1"
+	auth_headers: {}
 
 rules:
 	paths:
-		- ./rules/web
-		- ./rules/fingerprints
+		- ./rules
 	enabled_categories: []
 	enabled_registries: []
 	remote_feeds:

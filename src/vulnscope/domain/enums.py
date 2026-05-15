@@ -13,18 +13,6 @@ class Severity(StrEnum):
     INFO = "info"
 
 
-class ScanProfile(StrEnum):
-    """Supported scanner profiles."""
-
-    QUICK = "quick"
-    SAFE = "safe"
-    OWASP_TOP_10 = "owasp_top_10"
-    HEADERS = "headers"
-    DEPENDENCY = "dependency"
-    DEEP = "deep"
-    AUTHENTICATED = "authenticated"
-
-
 class ScopeMode(StrEnum):
     """Target scope restriction mode."""
 

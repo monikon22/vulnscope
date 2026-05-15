@@ -1,15 +1,18 @@
 ---
 id: OWASP_A10_SSRF_001
-title: Potential SSRF - internal metadata endpoint referenced
-description: Response contains references to known cloud metadata endpoints or internal addresses, indicating potential SSRF or sensitive outbound request behavior.
+title: SSRF Error Indicator
+description: Detects SSRF-like server-side fetch errors after safe URL probes.
 category: ssrf
 severity: high
-confidence_base: 90
+confidence_base: 65
+cwe: CWE-918
+payloads:
+  - "https://example.invalid/"
+  - "http://127.0.0.1/"
 match:
-  type: contains_any
+  type: regex
   values:
-    - '169.254.169.254'
-    - 'metadata.google.internal'
+    - "(connection refused|could not resolve host|ECONNREFUSED|No route to host|failed to open stream|getaddrinfo|cURL error|curl_exec)"
 recommendation: Validate and restrict URLs that the application can request; implement allow-listing and metadata protection.
 references:
   - https://owasp.org/www-project-top-ten/

@@ -1,18 +1,41 @@
 ---
-id: OWASP_A03_SQLI_001
-title: Possible SQL injection payload reflected
-description: Common SQL injection payloads detected in HTTP responses indicating potential injection vulnerability.
-category: injection
-severity: high
-confidence_base: 85
-match:
-  type: contains_any
-  values:
-    - "' OR '1'='1"
-    - '" OR "1"="1"'
-    - "UNION SELECT"
-recommendation: Use parameterized queries / prepared statements and validate input.
-references:
-  - https://owasp.org/www-community/attacks/SQL_Injection
-safe: true
-enabled: true
+- id: OWASP_A03_SQLI_ERROR_001
+  title: SQL Injection Error Disclosure
+  description: Detects database error messages after quote and predicate probes.
+  category: injection
+  severity: high
+  confidence_base: 80
+  cwe: CWE-89
+  payloads:
+    - "'"
+    - "\""
+    - "1' OR '1'='1"
+    - "1 OR 1=1"
+  match:
+    type: regex
+    values:
+      - "(SQL syntax|mysql_fetch|mysqli_.*error|MariaDB|MySQL|ORA-[0-9]{5}|PostgreSQL.*ERROR|SQLite.*Exception|SQLite/JDBCDriver|Unclosed quotation mark)"
+  recommendation: Use parameterized queries / prepared statements and validate input.
+  references:
+    - https://owasp.org/www-community/attacks/SQL_Injection
+  safe: true
+  enabled: true
+- id: OWASP_A03_SQLI_BEHAVIOR_001
+  title: SQL Injection Behavioral Indicator
+  description: Detects status changes after safe boolean SQL predicate probes.
+  category: injection
+  severity: high
+  confidence_base: 65
+  cwe: CWE-89
+  payloads:
+    - "1' OR '1'='1"
+    - "1' AND '1'='2"
+    - "1 OR 1=1"
+    - "1 AND 1=2"
+  match:
+    type: status_code_changed
+  recommendation: Use parameterized queries / prepared statements and validate input.
+  references:
+    - https://owasp.org/www-community/attacks/Blind_SQL_Injection
+  safe: true
+  enabled: true

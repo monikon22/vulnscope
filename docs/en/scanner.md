@@ -1,6 +1,6 @@
 # Scanner
 
-The scanner normalizes targets, enforces same-host or same-domain scope, crawls pages breadth-first, collects links and forms, identifies GET parameters, sends only safe payload probes, and emits events for the TUI.
+The scanner normalizes targets, enforces same-host or same-domain scope, crawls pages breadth-first, collects links and forms, identifies request parameters, sends bounded safe payload probes, and emits events for the TUI.
 
 Profiles tune request volume and check types. Safe Scan is the default. The scanner does not brute force, delete data, execute commands, or attempt post-detection exploitation.
 
@@ -34,7 +34,8 @@ flowchart TD
 	- `same_domain`: the same registrable domain.
 	- `custom`: include/exclude glob patterns.
 - The crawler ignores out-of-scope URLs.
-- Checks do not perform destructive actions.
+- Checks skip obviously destructive forms such as password-change, upload, setup, reset,
+  create, and delete flows.
 
 ## Crawl Behavior
 
@@ -43,35 +44,27 @@ flowchart TD
 - Limits: `max_depth`, `max_pages`.
 - URL sources:
 	- starting target,
-	- seed endpoints (for example `/robots.txt`, `/api`, `/graphql`),
 	- HTML links/assets/forms,
 	- simple endpoint strings from inline JavaScript.
 - Error responses (>=400) do not expand the link graph further.
 
 ## Payload Probing
 
-- Payload checks are executed only for GET parameters and GET forms.
-- If no query parameters exist, a common probe parameter set is used (for example `q`, `search`, `redirect`, `file`).
+- Payload checks are executed for query parameters and non-destructive GET/POST forms.
+- Form probes preserve hidden/default/select/submit values so CSRF-protected training apps
+  and PHP forms reach the intended handler.
+- If no query parameters exist, a context-aware probe parameter set is used (for example
+  `id`, `q`, `search`, `redirect`, `url`, `file`).
 - Baseline fields are saved per check (`baseline_status_code`, `baseline_size`).
 - Rate limiting applies: pause of $1 / rate\_limit$ seconds between checks.
 
 ## Profiles
 
-Supported profiles (`domain.enums.ScanProfile`):
+Profiles are saved scan presets from configuration. Profile names are custom labels, not a
+fixed enum, and the scanner does not branch on profile names at runtime.
 
-- `quick`
-- `safe`
-- `owasp_top_10`
-- `headers`
-- `dependency`
-- `deep`
-- `authenticated`
-
-Effective payload sets depend on profile:
-- `headers`, `dependency`: payload checks disabled.
-- `quick`: minimal subset.
-- `deep`: expanded subset (xss/sqli/path/redirect).
-- `safe` and `owasp_top_10`: balanced subsets.
+Payload checks use the default safe payload set for every profile. Scope, rate limit,
+page limits, rule selections, and remote feeds come from the selected saved profile.
 
 ## Scan Events (for TUI)
 
@@ -111,4 +104,3 @@ During scan execution, duplicate findings are filtered by key:
 - evidence fragment.
 
 This reduces noise and duplicates in reports and TUI.
-

@@ -8,12 +8,12 @@ cwe: CWE-918
 tags: [owasp-top-10]
 payloads:
   - "https://example.invalid/"
+  - "http://127.0.0.1/"
 match:
   type: regex
   values:
-    - "(connection refused|could not resolve host|ECONNREFUSED|No route to host)"
+    - "(connection refused|could not resolve host|ECONNREFUSED|No route to host|failed to open stream|getaddrinfo|cURL error|curl_exec)"
 recommendation: Restrict server-side URL fetchers with allowlists and block private network ranges.
 references:
   - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/
 safe: true
-

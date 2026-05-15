@@ -8,9 +8,10 @@ scanner:
   max_depth: 2
   max_pages: 50
   user_agent: VulnScope/0.1
+  auth_headers: {}
 rules:
   paths:
-  - ./rules/web
+  - ./rules
   enabled_categories: []
   enabled_registries: []
   remote_feeds:

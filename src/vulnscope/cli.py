@@ -95,6 +95,7 @@ def scan(
             max_depth=settings.scanner.max_depth,
             max_pages=settings.scanner.max_pages,
             user_agent=settings.scanner.user_agent,
+            auth_headers=dict(settings.scanner.auth_headers),
             enabled_registries=list(settings.rules.enabled_registries),
             enabled_categories=list(settings.rules.enabled_categories),
             remote_feeds=list(settings.rules.remote_feeds),

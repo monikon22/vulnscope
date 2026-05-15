@@ -25,9 +25,11 @@ Configuration precedence:
 - `max_depth` (int, default `2`): BFS crawl depth.
 - `max_pages` (int, default `50`): max pages per scan.
 - `user_agent` (string, default `VulnScope/0.1`): user agent used by the HTTP client.
+- `auth_headers` (map[string,string], default `{}`): HTTP headers for authenticated scans,
+  for example `Cookie: PHPSESSID=...; security=low`.
 
 ### `rules`
-- `paths` (list[string], default `['./rules/web']`): local paths to YAML rule files/directories.
+- `paths` (list[string], default `['./rules']`): local paths to YAML rule files/directories.
 - `enabled_categories` (list[string], default `[]`): default category filter.
 - `enabled_registries` (list[string], default `[]`): default registry filter.
 - `remote_feeds` (list[string], default `[]`): list of remote rule-feed URLs.
@@ -86,11 +88,11 @@ scanner:
 	max_depth: 2
 	max_pages: 50
 	user_agent: "VulnScope/0.1"
+	auth_headers: {}
 
 rules:
 	paths:
-		- ./rules/web
-		- ./rules/fingerprints
+		- ./rules
 	enabled_categories: []
 	enabled_registries: []
 	remote_feeds:

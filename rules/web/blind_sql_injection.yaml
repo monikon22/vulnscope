@@ -1,0 +1,19 @@
+id: SQLI_BEHAVIOR_001
+title: SQL Injection Behavioral Indicator
+description: Detects status or response-size changes after safe SQL predicate probes.
+category: sqli
+severity: high
+confidence_base: 65
+cwe: CWE-89
+tags: [owasp-top-10, injection]
+payloads:
+  - "1' OR '1'='1"
+  - "1' AND '1'='2"
+  - "1 OR 1=1"
+  - "1 AND 1=2"
+match:
+  type: status_code_changed
+recommendation: Use parameterized queries and avoid building SQL from request parameters.
+references:
+  - https://owasp.org/www-community/attacks/Blind_SQL_Injection
+safe: true
